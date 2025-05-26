@@ -4,15 +4,17 @@
 # URL : https://id.wikipedia.org/wiki/Daftar_perusahaan_yang_tercatat_di_Bursa_Efek_Indonesia                             
 #
 #############################################################################################
-install.packages("rvest")
-install.packages("curl")
-install.packages("tidyverse")
-install.packages("stringr")
+packages <- c("rvest", "curl", "tidyverse", "stringr")
 
-library(rvest)
-library(curl) #TO modify browser agent like behavior, i suppose
-library(tidyverse)
-library(stringr)
+# Loop through the packages
+for (pkg in packages) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    message(paste0("Installing package: ", pkg))
+    install.packages(pkg)
+  }
+  library(pkg, character.only = TRUE) # Load the package
+  message(paste0("Loaded package: ", pkg))
+}
 
 ################################################################################
 #  Web Scraping Daftar Emiten
