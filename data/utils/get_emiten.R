@@ -5,7 +5,7 @@
 #
 #############################################################################################
 install.packages("rvest")
-install.packges("curl")
+install.packages("curl")
 install.packages("tidyverse")
 install.packages("stringr")
 
