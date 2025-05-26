@@ -241,7 +241,7 @@ def ann_income():
       col_dict = dict()
       col_dict['index'] = 'accounts'
       for col in colnames:
-        col_dict[col] = str(col.year) + "_" + str(col.quarter)
+        col_dict[col] = str(col.year)
       first.rename(columns=col_dict, inplace=True)
       first['code']=company_list[i]
     else:
@@ -252,7 +252,7 @@ def ann_income():
       col_dict = dict()
       col_dict['index'] = 'accounts'
       for col in colnames:
-        col_dict[col] = str(col.year) + "_" + str(col.quarter)
+        col_dict[col] = str(col.year)
       temp.rename(columns=col_dict, inplace=True)
       temp['code']=company_list[i]
       first = pd.concat([first, temp])
@@ -294,7 +294,7 @@ def ann_balance():
       col_dict = dict()
       col_dict['index'] = 'accounts'
       for col in colnames:
-        col_dict[col] = str(col.year) + "_" + str(col.quarter)
+        col_dict[col] = str(col.year)
       first.rename(columns=col_dict, inplace=True)
       first['code']=company_list[i]
     else:
@@ -305,7 +305,7 @@ def ann_balance():
       col_dict = dict()
       col_dict['index'] = 'accounts'
       for col in colnames:
-        col_dict[col] = str(col.year) + "_" + str(col.quarter)
+        col_dict[col] = str(col.year)
       temp.rename(columns=col_dict, inplace=True)
       temp['code']=company_list[i]
       first = pd.concat([first, temp])
@@ -347,7 +347,7 @@ def ann_cf():
       col_dict = dict()
       col_dict['index'] = 'accounts'
       for col in colnames:
-        col_dict[col] = str(col.year) + "_" + str(col.quarter)
+        col_dict[col] = str(col.year)
       first.rename(columns=col_dict, inplace=True)
       first['code']=company_list[i]
     else:
@@ -358,7 +358,7 @@ def ann_cf():
       col_dict = dict()
       col_dict['index'] = 'accounts'
       for col in colnames:
-        col_dict[col] = str(col.year) + "_" + str(col.quarter)
+        col_dict[col] = str(col.year)
       temp.rename(columns=col_dict, inplace=True)
       temp['code']=company_list[i]
       first = pd.concat([first, temp])
