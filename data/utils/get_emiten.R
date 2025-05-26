@@ -42,4 +42,15 @@ cl_emiten_data <- data.frame(
   industry = emiten_data$Sektor
 )
 
-#save file in cwd
+#####################
+# 3. Save file to the specified path
+#####################
+output_file_path <- "/content/Portfolio-Tracker/data/list_emiten/list_emiten.csv"
+output_directory <- dirname(output_file_path)
+
+# Create the directory if it doesn't exist
+# recursive = TRUE ensures all necessary parent directories are created
+dir.create(output_directory, showWarnings = FALSE, recursive = TRUE)
+message(paste0("Ensured output directory exists: ", output_directory))
+
+write.csv(cl_emiten_data, file = output_file_path, row.names = FALSE)
