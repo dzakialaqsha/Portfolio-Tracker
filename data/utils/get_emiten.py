@@ -1,7 +1,5 @@
 import os
 import rpy2.robjects as ro
-from rpy2.robjects.packages import importr
-import sys
 
 def get_emiten_list():
     '''
