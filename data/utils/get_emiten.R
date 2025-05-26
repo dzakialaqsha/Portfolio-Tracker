@@ -4,6 +4,14 @@
 # URL : https://id.wikipedia.org/wiki/Daftar_perusahaan_yang_tercatat_di_Bursa_Efek_Indonesia                             
 #
 #############################################################################################
+# The script performs the following steps:
+# 1. Checks for and installs (if necessary) required R packages.
+# 2. Fetches the HTML content from the specified Wikipedia URL.
+# 3. Extracts the main table containing emiten data using an XPath.
+# 4. Formats and cleans the extracted data into a structured data frame.
+# 5. Creates the output directory if it doesn't exist.
+# 6. Saves the cleaned data as a CSV file to a predefined path.
+
 packages <- c("rvest", "curl", "tidyverse", "stringr")
 
 # Loop through the packages
