@@ -34,7 +34,7 @@ def history():
     try:
       temp = yf.Ticker(company)
       temp = pd.DataFrame(temp.history(period='2y'))
-      if not temp.empty and isinstance(temp, pd.DataFrame):
+      if not temp.empty:
         temp["code"] = company
         historical_data = pd.concat([historical_data, temp])
       else:
@@ -43,5 +43,8 @@ def history():
     except Exception as e:
       print(f"    Error fetching data for {company}: {e}. Skipping this ticker.")
 
-  return historical_data
-  
+  output_path = "/content/Portfolio-Tracker/data/tracked_companies/historical_data.csv"
+  try:
+    historical_data.to_csv(output_path, index=False)
+  except Exception as e:
+    print(f"\nError saving historical data to CSV: {e}")
