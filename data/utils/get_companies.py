@@ -423,8 +423,10 @@ def tall_quarter_fs():
 
   tall_fs = pd.DataFrame(new_data)
   tall_fs.year = tall_fs.year.astype(float)
-  with open('/content/Portfolio-Tracker/data/tracked_companies/tall_quarterly_fs.csv', 'w', newline='') as csvfile:
-    fieldnames = ['accounts', 'code', 'year', 'value', 'report']
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-    writer.writeheader()
-    writer.writerows(tall_fs.to_dict('records'))
+  
+  output_path = '/content/Portfolio-Tracker/data/tracked_companies/tall_quarterly_fs.csv'
+    
+  if os.path.exists(output_path):
+      tall_fs.to_csv(output_path, mode='a', header=False, index=False)
+  else:
+      tall_fs.to_csv(output_path, mode='w', header=True, index=False)
