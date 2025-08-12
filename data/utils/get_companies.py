@@ -3,6 +3,7 @@ import pandas as pd
 import yfinance as yf
 import datetime as dt
 import csv
+from tqdm import tqdm
 
 def history():
   '''
@@ -271,110 +272,7 @@ def ann_balance():
   is then saved to a CSV file.
   '''
   #check file integrity
-  company_list = "/content/Portfolio-Tracker/data/tracked_companies/company_names.csv"
-  if not os.path.exists(company_list):
-    raise ValueError(f"    Error: The file '{company_list}' DOES NOT exist at the specified path.")
-
-  # Load the company list into a DataFrame
-  try:
-    company_list = pd.read_csv(company_list)
-  except Exception as e:
-    raise ValueError(f"Error reading CSV file '{company_list}': {e}")
-
-  if "code" not in company_list.columns:
-    raise ValueError(f"    Error: 'code' column not found in '{company_list}'.")
-
-  company_list = [company + ".JK" for company in company_list["code"].tolist()]
-
-  for i in range(len(company_list)):
-    if i == 0:
-      first = yf.Ticker(company_list[i])
-      first = pd.DataFrame(first.balancesheet).reset_index()
-      colnames = first.columns[1:]
-      colnames = [col for col in colnames]
-      col_dict = dict()
-      col_dict['index'] = 'accounts'
-      for col in colnames:
-        col_dict[col] = str(col.year)
-      first.rename(columns=col_dict, inplace=True)
-      first['code']=company_list[i]
-    else:
-      temp = yf.Ticker(company_list[i])
-      temp = pd.DataFrame(temp.balancesheet).reset_index()
-      colnames = temp.columns[1:]
-      colnames = [col for col in colnames]
-      col_dict = dict()
-      col_dict['index'] = 'accounts'
-      for col in colnames:
-        col_dict[col] = str(col.year)
-      temp.rename(columns=col_dict, inplace=True)
-      temp['code']=company_list[i]
-      first = pd.concat([first, temp])
-  output_path = "/content/Portfolio-Tracker/data/tracked_companies/ann_bs_data.csv"
-  try:
-    first.to_csv(output_path, index=False)
-  except Exception as e:
-    print(f"\nError saving historical data to CSV: {e}")
-
-def ann_cf():
-  '''
-  Fetches annual cash flow statements for a list of tracked companies from yfinance,
-  processes and standardizes their column names to a 'YYYY_Qn' format (e.g., '2024_1', '2024_4'),
-  and concatenates them into a single DataFrame. The resulting combined data
-  is then saved to a CSV file.
-  '''
-  #check file integrity
-  company_list = "/content/Portfolio-Tracker/data/tracked_companies/company_names.csv"
-  if not os.path.exists(company_list):
-    raise ValueError(f"    Error: The file '{company_list}' DOES NOT exist at the specified path.")
-
-  # Load the company list into a DataFrame
-  try:
-    company_list = pd.read_csv(company_list)
-  except Exception as e:
-    raise ValueError(f"Error reading CSV file '{company_list}': {e}")
-
-  if "code" not in company_list.columns:
-    raise ValueError(f"    Error: 'code' column not found in '{company_list}'.")
-
-  company_list = [company + ".JK" for company in company_list["code"].tolist()]
-
-  for i in range(len(company_list)):
-    if i == 0:
-      first = yf.Ticker(company_list[i])
-      first = pd.DataFrame(first.cashflow).reset_index()
-      colnames = first.columns[1:]
-      colnames = [col for col in colnames]
-      col_dict = dict()
-      col_dict['index'] = 'accounts'
-      for col in colnames:
-        col_dict[col] = str(col.year)
-      first.rename(columns=col_dict, inplace=True)
-      first['code']=company_list[i]
-    else:
-      temp = yf.Ticker(company_list[i])
-      temp = pd.DataFrame(temp.cashflow).reset_index()
-      colnames = temp.columns[1:]
-      colnames = [col for col in colnames]
-      col_dict = dict()
-      col_dict['index'] = 'accounts'
-      for col in colnames:
-        col_dict[col] = str(col.year)
-      temp.rename(columns=col_dict, inplace=True)
-      temp['code']=company_list[i]
-      first = pd.concat([first, temp])
-  output_path = "/content/Portfolio-Tracker/data/tracked_companies/ann_cf_data.csv"
-  try:
-    first.to_csv(output_path, index=False)
-  except Exception as e:
-    print(f"\nError saving historical data to CSV: {e}")
-
-def tall_quarter_fs():
-  '''
-  Generate quarterly financial statement data in a normalized/tall format
-  '''
-  #check file integrity
-  #check file integrity
+  # Check file integrity (unchanged)
   company_list = "/content/Portfolio-Tracker/data/tracked_companies/company_names.csv"
   if not os.path.exists(company_list):
     raise ValueError(f"    Error: The file '{company_list}' DOES NOT exist at the specified path.")
@@ -383,7 +281,7 @@ def tall_quarter_fs():
   quarters_balance()
   quarters_income()
   quarters_cf()
-
+  
   quarterly_balance_sheet = pd.read_csv('/content/Portfolio-Tracker/data/tracked_companies/quarters_bs_data.csv')
   quarterly_income_statement = pd.read_csv('/content/Portfolio-Tracker/data/tracked_companies/quarters_is_data.csv')
   quarterly_cash_flow = pd.read_csv('/content/Portfolio-Tracker/data/tracked_companies/quarters_cf_data.csv')
@@ -394,18 +292,19 @@ def tall_quarter_fs():
 
   keep_columns = ["accounts", "code"]
   years = [year for year in quarterly_balance_sheet.columns.tolist() if year not in keep_columns]
-
   new_data = []
 
-  for year in years:
+  print("Processing balance sheet data...")
+  for year in tqdm(years, desc="Balance Sheet"):
     for index, row in quarterly_balance_sheet.iterrows():
       account = row['accounts']
       code = row['code']
       value = row[year]
       report = "balance_sheet"
       new_data.append({'accounts': account, 'code': code, 'year': year, 'value': value, 'report': report})
-
-  for year in years:
+  
+  print("Processing income statement data...")
+  for year in tqdm(years, desc="Income Statement"):
     for index, row in quarterly_income_statement.iterrows():
       account = row['accounts']
       code = row['code']
@@ -413,7 +312,8 @@ def tall_quarter_fs():
       report = 'income_statement'
       new_data.append({'accounts': account, 'code': code, 'year': year, 'value': value, 'report': report})
 
-  for year in years:
+  print("Processing cash flow data...")
+  for year in tqdm(years, desc="Cash Flow"):
     for index, row in quarterly_cash_flow.iterrows():
       account = row['accounts']
       code = row['code']
@@ -423,13 +323,13 @@ def tall_quarter_fs():
 
   tall_fs = pd.DataFrame(new_data)
   tall_fs.year = tall_fs.year.astype(float)
-  
+    
   output_path = '/content/Portfolio-Tracker/data/tracked_companies/tall_quarterly_fs.csv'
     
   if os.path.exists(output_path):
-      old_tall_fs = pd.read_csv(output_path)
-      tall_fs = pd.concat([old_tall_fs, tall_fs], axis = 0)
-      tall_fs = tall_fs.drop_duplicates()
-      tall_fs.to_csv(output_path, mode='a', header=False, index=False)
+    old_tall_fs = pd.read_csv(output_path)
+    tall_fs = pd.concat([old_tall_fs, tall_fs], axis = 0)
+    tall_fs = tall_fs.drop_duplicates()
+    tall_fs.to_csv(output_path, mode='w', header=True, index=False)
   else:
-      tall_fs.to_csv(output_path, mode='w', header=True, index=False)
+    tall_fs.to_csv(output_path, mode='w', header=True, index=False)
