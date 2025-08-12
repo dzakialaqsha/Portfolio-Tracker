@@ -3,7 +3,6 @@ import pandas as pd
 import yfinance as yf
 import datetime as dt
 import csv
-import tqdm
 
 def history():
   '''
@@ -374,7 +373,8 @@ def tall_quarter_fs():
   '''
   Generate quarterly financial statement data in a normalized/tall format
   '''
-  # Check file integrity
+  #check file integrity
+  #check file integrity
   company_list = "/content/Portfolio-Tracker/data/tracked_companies/company_names.csv"
   if not os.path.exists(company_list):
     raise ValueError(f"    Error: The file '{company_list}' DOES NOT exist at the specified path.")
@@ -394,19 +394,18 @@ def tall_quarter_fs():
 
   keep_columns = ["accounts", "code"]
   years = [year for year in quarterly_balance_sheet.columns.tolist() if year not in keep_columns]
+
   new_data = []
 
-  print("Processing balance sheet data...")
-  for year in tqdm(years, desc="Balance Sheet"):
+  for year in years:
     for index, row in quarterly_balance_sheet.iterrows():
       account = row['accounts']
       code = row['code']
       value = row[year]
       report = "balance_sheet"
       new_data.append({'accounts': account, 'code': code, 'year': year, 'value': value, 'report': report})
-  
-  print("Processing income statement data...")
-  for year in tqdm(years, desc="Income Statement"):
+
+  for year in years:
     for index, row in quarterly_income_statement.iterrows():
       account = row['accounts']
       code = row['code']
@@ -414,8 +413,7 @@ def tall_quarter_fs():
       report = 'income_statement'
       new_data.append({'accounts': account, 'code': code, 'year': year, 'value': value, 'report': report})
 
-  print("Processing cash flow data...")
-  for year in tqdm(years, desc="Cash Flow"):
+  for year in years:
     for index, row in quarterly_cash_flow.iterrows():
       account = row['accounts']
       code = row['code']
@@ -425,13 +423,13 @@ def tall_quarter_fs():
 
   tall_fs = pd.DataFrame(new_data)
   tall_fs.year = tall_fs.year.astype(float)
-    
+  
   output_path = '/content/Portfolio-Tracker/data/tracked_companies/tall_quarterly_fs.csv'
     
   if os.path.exists(output_path):
-    old_tall_fs = pd.read_csv(output_path)
-    tall_fs = pd.concat([old_tall_fs, tall_fs], axis = 0)
-    tall_fs = tall_fs.drop_duplicates()
-    tall_fs.to_csv(output_path, mode='w', header=True, index=False)
+      old_tall_fs = pd.read_csv(output_path)
+      tall_fs = pd.concat([old_tall_fs, tall_fs], axis = 0)
+      tall_fs = tall_fs.drop_duplicates()
+      tall_fs.to_csv(output_path, mode='a', header=False, index=False)
   else:
-    tall_fs.to_csv(output_path, mode='w', header=True, index=False)
+      tall_fs.to_csv(output_path, mode='w', header=True, index=False)
