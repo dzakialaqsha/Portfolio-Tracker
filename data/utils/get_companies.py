@@ -427,6 +427,9 @@ def tall_quarter_fs():
   output_path = '/content/Portfolio-Tracker/data/tracked_companies/tall_quarterly_fs.csv'
     
   if os.path.exists(output_path):
+      old_tall_fs = pd.read_csv(output_path)
+      tall_fs = pd.concat([old_tall_fs, tall_fs], axis = 0)
+      tall_fs = tall_fs.drop_duplicates()
       tall_fs.to_csv(output_path, mode='a', header=False, index=False)
   else:
       tall_fs.to_csv(output_path, mode='w', header=True, index=False)
