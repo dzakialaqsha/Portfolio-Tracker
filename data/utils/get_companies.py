@@ -385,7 +385,7 @@ def tall_quarter_fs():
   quarters_cf()
 
   quarterly_balance_sheet = pd.read_csv('/content/Portfolio-Tracker/data/tracked_companies/quarters_bs_data.csv')
-  quarterly_income_statement = pd.read_csv('/content/Portfolio-Tracker/data/tracked_companies/quarters_bs_data.csv')
+  quarterly_income_statement = pd.read_csv('/content/Portfolio-Tracker/data/tracked_companies/quarters_is_data.csv')
   quarterly_cash_flow = pd.read_csv('/content/Portfolio-Tracker/data/tracked_companies/quarters_cf_data.csv')
 
   quarterly_balance_sheet.columns = quarterly_balance_sheet.columns.str.replace('_', '.')
