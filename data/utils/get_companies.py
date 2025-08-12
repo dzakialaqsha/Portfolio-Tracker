@@ -379,9 +379,9 @@ def tall_quarter_fs():
     raise ValueError(f"    Error: The file '{company_list}' DOES NOT exist at the specified path.")
 
   #import financial statements
-  get_companies.quarters_balance()
-  get_companies.quarters_income()
-  get_companies.quarters_cf()
+  quarters_balance()
+  quarters_income()
+  quarters_cf()
 
   quarterly_balance_sheet = pd.read_csv('/content/Portfolio-Tracker/data/tracked_companies/quarters_bs_data.csv')
   quarterly_income_statement = pd.read_csv('/content/Portfolio-Tracker/data/tracked_companies/quarters_bs_data.csv')
