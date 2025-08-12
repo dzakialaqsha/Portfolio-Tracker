@@ -367,3 +367,63 @@ def ann_cf():
     first.to_csv(output_path, index=False)
   except Exception as e:
     print(f"\nError saving historical data to CSV: {e}")
+
+def tall_quarter_fs():
+  '''
+  Generate quarterly financial statement data in a normalized/tall format
+  '''
+  #check file integrity
+  #check file integrity
+  company_list = "/content/Portfolio-Tracker/data/tracked_companies/company_names.csv"
+  if not os.path.exists(company_list):
+    raise ValueError(f"    Error: The file '{company_list}' DOES NOT exist at the specified path.")
+
+  #import financial statements
+  get_companies.quarters_balance()
+  get_companies.quarters_income()
+  get_companies.quarters_cf()
+
+  quarterly_balance_sheet = pd.read_csv('/content/Portfolio-Tracker/data/tracked_companies/quarters_bs_data.csv')
+  quarterly_income_statement = pd.read_csv('/content/Portfolio-Tracker/data/tracked_companies/quarters_bs_data.csv')
+  quarterly_cash_flow = pd.read_csv('/content/Portfolio-Tracker/data/tracked_companies/quarters_cf_data.csv')
+
+  quarterly_balance_sheet.columns = quarterly_balance_sheet.columns.str.replace('_', '.')
+  quarterly_cash_flow.columns = quarterly_cash_flow.columns.str.replace('_', '.')
+  quarterly_income_statement.columns = quarterly_income_statement.columns.str.replace('_', '.')
+
+  keep_columns = ["accounts", "code"]
+  years = [year for year in quarterly_balance_sheet.columns.tolist() if year not in keep_columns]
+
+  new_data = []
+
+  for year in years:
+    for index, row in quarterly_balance_sheet.iterrows():
+      account = row['accounts']
+      code = row['code']
+      value = row[year]
+      report = "balance_sheet"
+      new_data.append({'accounts': account, 'code': code, 'year': year, 'value': value, 'report': report})
+
+  for year in years:
+    for index, row in quarterly_income_statement.iterrows():
+      account = row['accounts']
+      code = row['code']
+      value = row[year]
+      report = 'income_statement'
+      new_data.append({'accounts': account, 'code': code, 'year': year, 'value': value, 'report': report})
+
+  for year in years:
+    for index, row in quarterly_cash_flow.iterrows():
+      account = row['accounts']
+      code = row['code']
+      value = row[year]
+      report = 'cash_flow'
+      new_data.append({'accounts': account, 'code': code, 'year': year, 'value': value, 'report': report})
+
+  tall_fs = pd.DataFrame(new_data)
+  tall_fs.year = tall_fs.year.astype(float)
+  with open('/content/Portfolio-Tracker/data/tracked_companies/tall_quarterly_fs.csv', 'w', newline='') as csvfile:
+    fieldnames = ['accounts', 'code', 'year', 'value', 'report']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerows(tall_fs.to_dict('records'))
